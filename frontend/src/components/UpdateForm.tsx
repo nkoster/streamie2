@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateStreamKey } from '../api';
+import { updateStreamKey, getConfig } from '../api';
 
 interface UpdateFormProps {
   token: string;
@@ -22,6 +22,24 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
       onLogout();
     }
   }, [token, onLogout]);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const config = await getConfig(token);
+        setStreamKeyYouTube(config.streamkey_youtube);
+        setStreamKeyTwitch(config.streamkey_twitch);
+        setStreamKeyFacebook(config.streamkey_facebook);
+        setEnableYouTube(config.enable_youtube);
+        setEnableTwitch(config.enable_twitch);
+        setEnableFacebook(config.enable_facebook);
+      } catch (err) {
+        setMessage(`Failed to load configuration.\n${err}`);
+      }
+    };
+
+    fetchConfig();
+  }, [token]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +69,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               checked={enableYouTube}
               onChange={(e) => setEnableYouTube(e.target.checked)}
             />
-            Enable YouTube
+            YouTube
           </label>
           <input
             type="text"
@@ -67,7 +85,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               checked={enableTwitch}
               onChange={(e) => setEnableTwitch(e.target.checked)}
             />
-            Enable Twitch
+            Twitch
           </label>
           <input
             type="text"
@@ -83,7 +101,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               checked={enableFacebook}
               onChange={(e) => setEnableFacebook(e.target.checked)}
             />
-            Enable Facebook
+            Facebook
           </label>
           <input
             type="text"
