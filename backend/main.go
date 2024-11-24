@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	_ "os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -37,10 +39,31 @@ type UpdateKeysRequest struct {
 	EnableFacebook    bool   `json:"enable_facebook"`
 }
 
-// Map to simulate users and passwords
-var users = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
+// Users map
+var users = map[string]string{}
+
+// Load users from file
+func loadUsers(fileName string) error {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return fmt.Errorf("could not open user file: %v", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.Split(line, ",")
+		if len(parts) != 2 {
+			continue
+		}
+		users[parts[0]] = parts[1] // user,password
+	}
+
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("error reading user file: %v", err)
+	}
+	return nil
 }
 
 // Middleware for CORS
@@ -170,6 +193,13 @@ func conditionalPrefix(enabled bool) string {
 
 func main() {
 	mux := http.NewServeMux()
+
+	// Load users from file
+	err := loadUsers("streamie_users")
+	if err != nil {
+		fmt.Printf("Error loading users: %v\n", err)
+		os.Exit(1)
+	}
 
 	// Routes
 	mux.HandleFunc("/auth", authHandler)
