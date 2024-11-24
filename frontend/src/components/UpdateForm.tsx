@@ -3,10 +3,11 @@ import { updateStreamKey } from '../api';
 
 interface UpdateFormProps {
   token: string;
+  user: string | null;
   onLogout: () => void;
 }
 
-const UpdateForm: React.FC<UpdateFormProps> = ({ token, onLogout }) => {
+const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [streamKeyYouTube, setStreamKeyYouTube] = useState('');
   const [streamKeyTwitch, setStreamKeyTwitch] = useState('');
   const [streamKeyFacebook, setStreamKeyFacebook] = useState('');
@@ -41,7 +42,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, onLogout }) => {
 
   return (
     <div>
-      <h1>Update Stream Keys</h1>
+      <h3>Stream Keys {user}</h3>
       <form onSubmit={handleUpdate}>
         <div>
           <label>
