@@ -28,6 +28,15 @@ type UpdateRequest struct {
 	StreamKey string `json:"streamkey"`
 }
 
+type UpdateKeysRequest struct {
+	StreamKeyYouTube  string `json:"streamkey_youtube"`
+	StreamKeyTwitch   string `json:"streamkey_twitch"`
+	StreamKeyFacebook string `json:"streamkey_facebook"`
+	EnableYouTube     bool   `json:"enable_youtube"`
+	EnableTwitch      bool   `json:"enable_twitch"`
+	EnableFacebook    bool   `json:"enable_facebook"`
+}
+
 // Map to simulate users and passwords
 var users = map[string]string{
 	"user1": "password1",
@@ -119,15 +128,27 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 	username := (*claims)["username"].(string)
 
 	// Parse the streamkey from the request body
-	var updateReq UpdateRequest
+	var updateReq UpdateKeysRequest
 	if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
-	// Update the configuration file
+	// Generate NGINX configuration file
 	filename := fmt.Sprintf("%s.conf", username)
-	content := fmt.Sprintf("streamkey=%s", updateReq.StreamKey)
+	content := fmt.Sprintf(`application %s {
+    live on;
+    record off;
+    %spush rtmp://a.rtmp.youtube.com/live2/%s;
+    %spush rtmp://localhost:19350/rtmp/%s;
+    %spush rtmp://ams03.contribute.live-video.net/app/%s;
+}
+`, username,
+		conditionalPrefix(updateReq.EnableYouTube), updateReq.StreamKeyYouTube,
+		conditionalPrefix(updateReq.EnableFacebook), updateReq.StreamKeyFacebook,
+		conditionalPrefix(updateReq.EnableTwitch), updateReq.StreamKeyTwitch,
+	)
+
 	if err := os.WriteFile(filename, []byte(content), 0644); err != nil {
 		http.Error(w, "Error writing file", http.StatusInternalServerError)
 		return
@@ -138,6 +159,13 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Error writing response", http.StatusInternalServerError)
 	}
+}
+
+func conditionalPrefix(enabled bool) string {
+	if enabled {
+		return ""
+	}
+	return "#"
 }
 
 func main() {
