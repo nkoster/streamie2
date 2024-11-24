@@ -1,16 +1,43 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8080'; // Backend URL
+const API_BASE = 'http://localhost:8080';
+
+// Axios instance
+const apiClient = axios.create({
+  baseURL: API_BASE,
+});
+
+// Add an interceptor to handle 401 errors
+apiClient.interceptors.response.use(
+  (response) => response, // Let successful responses pass through
+  (error) => {
+    if (error.response?.status === 401) {
+      // Remove the token if it is no longer valid
+      localStorage.removeItem('token');
+      // Redirect the user to the login page
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const login = async (username: string, password: string): Promise<string> => {
-  const response = await axios.post(`${API_BASE}/auth`, { username, password });
-  return response.data.token; // Return JWT-token
+  const response = await apiClient.post('/auth', { username, password });
+  return response.data.token;
 };
 
-export const updateStreamKey = async (token: string, streamKey: string): Promise<void> => {
-  await axios.post(
-    `${API_BASE}/update`,
-    { streamkey: streamKey },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+export const updateStreamKey = async (
+  token: string,
+  payload: {
+    streamkey_youtube: string;
+    streamkey_twitch: string;
+    streamkey_facebook: string;
+    enable_youtube: boolean;
+    enable_twitch: boolean;
+    enable_facebook: boolean;
+  }
+): Promise<void> => {
+  await apiClient.post('/update', payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
