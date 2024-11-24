@@ -26,11 +26,16 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
-type UpdateRequest struct {
-	StreamKey string `json:"streamkey"`
+type UpdateKeysRequest struct {
+	StreamKeyYouTube  string `json:"streamkey_youtube"`
+	StreamKeyTwitch   string `json:"streamkey_twitch"`
+	StreamKeyFacebook string `json:"streamkey_facebook"`
+	EnableYouTube     bool   `json:"enable_youtube"`
+	EnableTwitch      bool   `json:"enable_twitch"`
+	EnableFacebook    bool   `json:"enable_facebook"`
 }
 
-type UpdateKeysRequest struct {
+type ConfigResponse struct {
 	StreamKeyYouTube  string `json:"streamkey_youtube"`
 	StreamKeyTwitch   string `json:"streamkey_twitch"`
 	StreamKeyFacebook string `json:"streamkey_facebook"`
@@ -191,6 +196,86 @@ func conditionalPrefix(enabled bool) string {
 	return "#"
 }
 
+func getConfHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Validate JWT-token
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+		return
+	}
+
+	tokenString := authHeader[len("Bearer "):]
+	claims := &jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil || !token.Valid {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	username := (*claims)["username"].(string)
+
+	// Read the NGINX conf file
+	filename := fmt.Sprintf("%s.conf", username)
+	file, err := os.Open(filename)
+	if err != nil {
+		http.Error(w, "Configuration file not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+
+	// Parse the file
+	var conf ConfigResponse
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.Contains(line, "push rtmp://a.rtmp.youtube.com/live2/") {
+			conf.EnableYouTube = !isCommented(line)
+			conf.StreamKeyYouTube = extractKey(line)
+		} else if strings.Contains(line, "push rtmp://localhost:19350/rtmp/") {
+			conf.EnableFacebook = !isCommented(line)
+			conf.StreamKeyFacebook = extractKey(line)
+		} else if strings.Contains(line, "push rtmp://ams03.contribute.live-video.net/app/") {
+			conf.EnableTwitch = !isCommented(line)
+			conf.StreamKeyTwitch = extractKey(line)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		http.Error(w, "Error reading configuration file", http.StatusInternalServerError)
+		return
+	}
+
+	// Send conf as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(conf)
+}
+
+// Helper function to check if a line is commented
+func isCommented(line string) bool {
+	// Controleer of de regel begint met "#"
+	return strings.HasPrefix(line, "#")
+}
+
+// Helper function to extract the streamkey from a line
+func extractKey(line string) string {
+	line = strings.TrimPrefix(line, "#")
+	line = strings.TrimSpace(line)
+	parts := strings.Split(line, "/")
+	if len(parts) > 1 {
+		key := strings.TrimSpace(parts[len(parts)-1])
+		return strings.TrimSuffix(key, ";")
+	}
+	return ""
+}
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -204,6 +289,7 @@ func main() {
 	// Routes
 	mux.HandleFunc("/auth", authHandler)
 	mux.HandleFunc("/update", updateHandler)
+	mux.HandleFunc("/getconf", getConfHandler)
 
 	// Wrap the mux with the CORS middleware
 	handler := corsMiddleware(mux)
