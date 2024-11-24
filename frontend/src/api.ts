@@ -41,3 +41,10 @@ export const updateStreamKey = async (
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+export const getConfig = async (token: string) => {
+  const response = await apiClient.get('/getconf', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
