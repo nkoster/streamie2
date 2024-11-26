@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {TextField, Button, Switch} from '@mui/material'
+import {TextField, Button, Switch, Snackbar} from '@mui/material'
 import { updateStreamKey, getConfig } from '../api';
 
 interface UpdateFormProps {
@@ -119,7 +119,13 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
           {/*</div>*/}
         </div>
       </form>
-      {message && <p>{message}</p>}
+      {/*{message && <p>{message}</p>}*/}
+      <Snackbar
+        open={!!message}
+        autoHideDuration={3000}
+        onClose={() => setMessage('')}
+        message={message}
+      />
       <button onClick={onLogout}>Logout</button>
     </div>
   );
