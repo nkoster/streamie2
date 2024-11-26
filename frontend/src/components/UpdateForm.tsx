@@ -64,9 +64,10 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
       <form onSubmit={handleUpdate}>
         <div style={{
           display: 'flex', flexDirection: 'column',
-          alignItems: 'center', gap: '2rem', borderWidth: '1px',
-          borderColor: 'black', borderStyle: 'solid', padding: '2rem',
+          alignItems: 'center', gap: '2rem',
+          // borderWidth: '1px', borderColor: 'black', borderStyle: 'solid', padding: '2rem',
         }}>
+          <Button style={{width: '100%'}} onClick={onLogout} variant="outlined">Logout</Button>
           <div>Stream keys for stream <strong>{user}</strong></div>
           <div>
             <Switch
@@ -115,7 +116,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
           </div>
           {/*<button type="submit">Update</button>*/}
           {/*<div style={{width: '100%'}}>*/}
-            <Button style={{width: '100%'}} variant="contained" type={'submit'}>Update</Button>
+          <Button style={{width: '100%'}} variant="contained" type={'submit'}>Update</Button>
           {/*</div>*/}
         </div>
       </form>
@@ -126,7 +127,6 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
         onClose={() => setMessage('')}
         message={message}
       />
-      <button onClick={onLogout}>Logout</button>
     </div>
   );
 };
