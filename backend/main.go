@@ -260,7 +260,7 @@ func getConfHandler(w http.ResponseWriter, r *http.Request) {
 
 // Helper function to check if a line is commented
 func isCommented(line string) bool {
-	// Controleer of de regel begint met "#"
+	// Check if the line starts with a "#"
 	return strings.HasPrefix(line, "#")
 }
 
@@ -290,6 +290,10 @@ func main() {
 	mux.HandleFunc("/auth", authHandler)
 	mux.HandleFunc("/update", updateHandler)
 	mux.HandleFunc("/getconf", getConfHandler)
+	// Serve static files for React build
+	staticDir := "static" // Directory where your React build is located
+	fs := http.FileServer(http.Dir(staticDir))
+	mux.Handle("/", fs)
 
 	// Wrap the mux with the CORS middleware
 	handler := corsMiddleware(mux)
