@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {TextField, Button, Switch} from '@mui/material'
 import { updateStreamKey, getConfig } from '../api';
 
 interface UpdateFormProps {
@@ -60,57 +61,63 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
 
   return (
     <div>
-      <h3>Stream Keys {user}</h3>
       <form onSubmit={handleUpdate}>
-        <div>
-          <label>
-            <input
-              type="checkbox"
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', gap: '2rem', borderWidth: '1px',
+          borderColor: 'black', borderStyle: 'solid', padding: '2rem',
+        }}>
+          <div>Stream keys for stream <strong>{user}</strong></div>
+          <div>
+            <Switch
               checked={enableYouTube}
               onChange={(e) => setEnableYouTube(e.target.checked)}
+              name="enableYouTube"
+              inputProps={{'aria-label': 'enable youtube'}}
             />
-            YouTube
-          </label>
-          <input
-            type="text"
-            placeholder="YouTube Stream Key"
-            value={streamKeyYouTube}
-            onChange={(e) => setStreamKeyYouTube(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
+            <TextField
+              type="text"
+              value={streamKeyYouTube}
+              onChange={(e) => setStreamKeyYouTube(e.target.value)}
+              label="Youtube"
+              variant="outlined"
+            />
+          </div>
+          <div>
+            <Switch
               checked={enableTwitch}
               onChange={(e) => setEnableTwitch(e.target.checked)}
+              name="enableTwitch"
+              inputProps={{'aria-label': 'enable twitch'}}
             />
-            Twitch
-          </label>
-          <input
-            type="text"
-            placeholder="Twitch Stream Key"
-            value={streamKeyTwitch}
-            onChange={(e) => setStreamKeyTwitch(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
+            <TextField
+              type="text"
+              value={streamKeyTwitch}
+              onChange={(e) => setStreamKeyTwitch(e.target.value)}
+              label="Twitch"
+              variant="outlined"
+            />
+          </div>
+          <div>
+            <Switch
               checked={enableFacebook}
               onChange={(e) => setEnableFacebook(e.target.checked)}
+              name="enableFacebook"
+              inputProps={{'aria-label': 'enable facebook'}}
             />
-            Facebook
-          </label>
-          <input
-            type="text"
-            placeholder="Facebook Stream Key"
-            value={streamKeyFacebook}
-            onChange={(e) => setStreamKeyFacebook(e.target.value)}
-          />
+            <TextField
+              type="text"
+              value={streamKeyFacebook}
+              onChange={(e) => setStreamKeyFacebook(e.target.value)}
+              label="Facebook"
+              variant="outlined"
+            />
+          </div>
+          {/*<button type="submit">Update</button>*/}
+          {/*<div style={{width: '100%'}}>*/}
+            <Button style={{width: '100%'}} variant="contained" type={'submit'}>Update</Button>
+          {/*</div>*/}
         </div>
-        <button type="submit">Update</button>
       </form>
       {message && <p>{message}</p>}
       <button onClick={onLogout}>Logout</button>

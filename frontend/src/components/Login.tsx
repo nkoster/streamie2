@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TextField, Button } from '@mui/material';
 import { login } from '../api';
 
 interface LoginProps {
@@ -21,29 +22,32 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%'}}>
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+        <div style={{display: 'flex', flexDirection: 'column', gap: '2rem'}}>
+          <div>
+            <TextField
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              label="stream"
+              variant="standard"
+              required
+            />
+          </div>
+          <div>
+            <TextField
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              label="password"
+              variant="standard"
+              required
+            />
+          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <Button variant="outlined" type={'submit'}>login</Button>
         </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Login</button>
       </form>
     </div>
   );
