@@ -163,7 +163,7 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate NGINX configuration file
-	filename := fmt.Sprintf("%s.conf", username)
+	filename := fmt.Sprintf("nginx/%s.conf", username)
 	content := fmt.Sprintf(`application %s {
     live on;
     record off;
@@ -223,7 +223,7 @@ func getConfHandler(w http.ResponseWriter, r *http.Request) {
 	username := (*claims)["username"].(string)
 
 	// Read the NGINX conf file
-	filename := fmt.Sprintf("%s.conf", username)
+	filename := fmt.Sprintf("nginx/%s.conf", username)
 	file, err := os.Open(filename)
 	if err != nil {
 		http.Error(w, "Configuration file not found", http.StatusNotFound)
