@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8080';
+const getBaseUrl = () => {
+  const { protocol, hostname, port } = window.location;
+
+  const portPart = port ? `:${port}` : '';
+
+  return `${protocol}//${hostname}${portPart}`;
+};
+
+const API_BASE = getBaseUrl();
 
 // Axios instance
 const apiClient = axios.create({
