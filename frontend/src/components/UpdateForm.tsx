@@ -83,7 +83,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
     const streamKey = `rtmp://streamie.w3b.net/${user}`;
     navigator.clipboard.writeText(streamKey)
       .then(() => {
-        setMessage('Stream key copied to clipboard!');
+        setMessage('Stream RTMP URL copied to clipboard!');
       })
       .catch(err => {
         console.error('Failed to copy to clipboard:', err);
