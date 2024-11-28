@@ -8,6 +8,8 @@ interface UpdateFormProps {
   onLogout: () => void;
 }
 
+const width = '25rem';
+
 const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [streamKeyYouTube, setStreamKeyYouTube] = useState('');
   const [streamKeyTwitch, setStreamKeyTwitch] = useState('');
@@ -15,6 +17,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [enableYouTube, setEnableYouTube] = useState(false);
   const [enableTwitch, setEnableTwitch] = useState(false);
   const [enableFacebook, setEnableFacebook] = useState(false);
+  const [chnaged, setChanged] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -65,66 +68,90 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
         <div style={{
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', gap: '2rem',
-          // borderWidth: '1px', borderColor: 'black', borderStyle: 'solid', padding: '2rem',
         }}>
           <Button style={{width: '100%'}} onClick={onLogout} variant="outlined">Logout</Button>
-          <div>Stream keys for stream <strong>{user}</strong></div>
+          <div style={{fontSize: '1.2rem'}}>Stream keys for stream <strong>{user}</strong></div>
           <div>
             <Switch
               checked={enableYouTube}
-              onChange={(e) => setEnableYouTube(e.target.checked)}
+              onChange={(e) => {
+                setEnableYouTube(e.target.checked);
+                setChanged(true);
+              }}
               name="enableYouTube"
               inputProps={{'aria-label': 'enable youtube'}}
             />
             <TextField
               type="text"
               value={streamKeyYouTube}
-              onChange={(e) => setStreamKeyYouTube(e.target.value)}
+              onChange={(e) => {
+                setStreamKeyYouTube(e.target.value);
+                setChanged(true);
+              }}
               label="Youtube"
               variant="outlined"
+              style={{width}}
             />
           </div>
           <div>
             <Switch
               checked={enableTwitch}
-              onChange={(e) => setEnableTwitch(e.target.checked)}
+              onChange={(e) => {
+                setEnableTwitch(e.target.checked);
+                setChanged(true);
+              }}
               name="enableTwitch"
               inputProps={{'aria-label': 'enable twitch'}}
             />
             <TextField
               type="text"
               value={streamKeyTwitch}
-              onChange={(e) => setStreamKeyTwitch(e.target.value)}
+              onChange={(e) => {
+                setStreamKeyTwitch(e.target.value);
+                setChanged(true);
+              }}
               label="Twitch"
               variant="outlined"
+              style={{width}}
             />
           </div>
           <div>
             <Switch
               checked={enableFacebook}
-              onChange={(e) => setEnableFacebook(e.target.checked)}
+              onChange={(e) => {
+                setEnableFacebook(e.target.checked)
+                setChanged(true);
+              }}
               name="enableFacebook"
               inputProps={{'aria-label': 'enable facebook'}}
             />
             <TextField
               type="text"
               value={streamKeyFacebook}
-              onChange={(e) => setStreamKeyFacebook(e.target.value)}
+              onChange={(e) => {
+                setStreamKeyFacebook(e.target.value);
+                setChanged(true);
+              }}
               label="Facebook"
               variant="outlined"
+              style={{width}}
             />
           </div>
-          {/*<button type="submit">Update</button>*/}
-          {/*<div style={{width: '100%'}}>*/}
-          <Button style={{width: '100%'}} variant="contained" type={'submit'}>Update</Button>
-          {/*</div>*/}
+          <Button
+            style={{width: '100%', marginTop: '1.2rem'}}
+            variant="contained"
+            type={'submit'}
+            disabled={!chnaged}
+          >Update</Button>
         </div>
       </form>
-      {/*{message && <p>{message}</p>}*/}
       <Snackbar
         open={!!message}
         autoHideDuration={3000}
-        onClose={() => setMessage('')}
+        onClose={() => {
+          setMessage('');
+          setChanged(false);
+        }}
         message={message}
       />
     </div>
