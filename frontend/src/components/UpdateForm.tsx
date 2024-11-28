@@ -73,6 +73,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
         enable_facebook: enableFacebook,
       });
       setMessage('Stream keys updated successfully!');
+      setChanged(false);
     } catch (err) {
       setMessage(`Failed to update stream keys.\n${err}`);
     }
