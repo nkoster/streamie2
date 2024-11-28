@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {TextField, Button, Switch, Snackbar} from '@mui/material'
+import {TextField, Button, Switch, Snackbar, Tooltip, styled, TooltipProps, tooltipClasses, Icon} from '@mui/material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { updateStreamKey, getConfig } from '../api';
 
 interface UpdateFormProps {
@@ -17,11 +18,11 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [enableYouTube, setEnableYouTube] = useState(false);
   const [enableTwitch, setEnableTwitch] = useState(false);
   const [enableFacebook, setEnableFacebook] = useState(false);
-  const [chnaged, setChanged] = useState(false);
+  const [changed, setChanged] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Check if token is valid (optional, token validation can be more complex)
+    // Check if token is valid
     if (!token) {
       onLogout();
     }
@@ -62,6 +63,29 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
     }
   };
 
+  const handleCopyToClipboard = () => {
+    const streamKey = `rtmp://streamie.w3b.net/${user}`;
+    navigator.clipboard.writeText(streamKey)
+      .then(() => {
+        setMessage('Stream key copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy to clipboard:', err);
+      });
+  };
+
+  const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 300,
+      fontSize: theme.typography.pxToRem(20),
+      border: '1px solid #dadde9',
+    },
+  }));
+
   return (
     <div>
       <form onSubmit={handleUpdate}>
@@ -70,13 +94,21 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
           alignItems: 'center', gap: '2rem',
         }}>
           <Button style={{width: '100%'}} onClick={onLogout} variant="outlined">Logout</Button>
-          <div style={{fontSize: '1.2rem'}}>Stream keys for stream <strong>{user}</strong></div>
+          <div style={{fontSize: '1.2rem'}}>Stream keys for stream&nbsp;
+            <HtmlTooltip title={`rtmp://streamie.w3b.net/${user}`}
+                         aria-label="stream" onClick={handleCopyToClipboard}
+                         style={{cursor: 'pointer'}}
+                         arrow
+            >
+              <span><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 15 }} /></span>
+            </HtmlTooltip>
+          </div>
           <div>
             <Switch
               checked={enableYouTube}
               onChange={(e) => {
-                setEnableYouTube(e.target.checked);
-                setChanged(true);
+                setEnableYouTube(e.target.checked)
+                setChanged(true)
               }}
               name="enableYouTube"
               inputProps={{'aria-label': 'enable youtube'}}
@@ -85,8 +117,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               type="text"
               value={streamKeyYouTube}
               onChange={(e) => {
-                setStreamKeyYouTube(e.target.value);
-                setChanged(true);
+                setStreamKeyYouTube(e.target.value)
+                setChanged(true)
               }}
               label="Youtube"
               variant="outlined"
@@ -97,8 +129,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
             <Switch
               checked={enableTwitch}
               onChange={(e) => {
-                setEnableTwitch(e.target.checked);
-                setChanged(true);
+                setEnableTwitch(e.target.checked)
+                setChanged(true)
               }}
               name="enableTwitch"
               inputProps={{'aria-label': 'enable twitch'}}
@@ -107,8 +139,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               type="text"
               value={streamKeyTwitch}
               onChange={(e) => {
-                setStreamKeyTwitch(e.target.value);
-                setChanged(true);
+                setStreamKeyTwitch(e.target.value)
+                setChanged(true)
               }}
               label="Twitch"
               variant="outlined"
@@ -120,7 +152,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               checked={enableFacebook}
               onChange={(e) => {
                 setEnableFacebook(e.target.checked)
-                setChanged(true);
+                setChanged(true)
               }}
               name="enableFacebook"
               inputProps={{'aria-label': 'enable facebook'}}
@@ -129,8 +161,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               type="text"
               value={streamKeyFacebook}
               onChange={(e) => {
-                setStreamKeyFacebook(e.target.value);
-                setChanged(true);
+                setStreamKeyFacebook(e.target.value)
+                setChanged(true)
               }}
               label="Facebook"
               variant="outlined"
@@ -141,7 +173,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
             style={{width: '100%', marginTop: '1.2rem'}}
             variant="contained"
             type={'submit'}
-            disabled={!chnaged}
+            disabled={!changed}
           >Update</Button>
         </div>
       </form>
