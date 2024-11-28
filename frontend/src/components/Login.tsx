@@ -46,7 +46,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             />
           </div>
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          <Button variant="outlined" type={'submit'}>login</Button>
+          <Button disabled={username.length < 6 && password.length < 6} variant="outlined" type={'submit'}>login</Button>
         </div>
       </form>
     </div>
