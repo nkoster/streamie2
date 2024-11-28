@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {TextField, Button, Switch, Snackbar, Tooltip, styled, TooltipProps, tooltipClasses, Icon} from '@mui/material'
+import {TextField, Button, Switch, Snackbar, Tooltip, styled, TooltipProps, tooltipClasses} from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { updateStreamKey, getConfig } from '../api';
 
