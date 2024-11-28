@@ -146,6 +146,11 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               }}
               label="YOUTUBE"
               variant="outlined"
+              slotProps={{
+                input: {
+                  spellCheck: false
+                },
+              }}
               style={{width}}
             />
           </div>
@@ -195,6 +200,11 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               }}
               label="TWITCH"
               variant="outlined"
+              slotProps={{
+                input: {
+                  spellCheck: false
+                },
+              }}
               style={{width}}
             />
           </div>
