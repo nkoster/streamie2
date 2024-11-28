@@ -9,8 +9,6 @@ interface UpdateFormProps {
   onLogout: () => void;
 }
 
-const width = window.innerWidth > 600 ? '22rem' : '15rem';
-
 const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [streamKeyYouTube, setStreamKeyYouTube] = useState('');
   const [streamKeyTwitch, setStreamKeyTwitch] = useState('');
@@ -20,6 +18,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [enableFacebook, setEnableFacebook] = useState(false);
   const [changed, setChanged] = useState(false);
   const [message, setMessage] = useState('');
+  const [width, setWidth] = useState(window.innerWidth > 600 ? '22rem' : '15rem');
 
   useEffect(() => {
     // Check if token is valid
@@ -45,6 +44,20 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
 
     fetchConfig();
   }, [token]);
+
+  useEffect(() => {
+    // change width based on window size
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 600) {
+        setWidth('22rem');
+      } else {
+        setWidth('15rem');
+      }
+    });
+    return () => {
+      window.removeEventListener('resize', () => {});
+    };
+  }, [])
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,11 +91,12 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: '#f5f5f9',
-      color: 'rgba(0, 0, 0, 0.87)',
+      backgroundColor: '#3f50b5',
+      color: 'white',
       maxWidth: 320,
       fontSize: theme.typography.pxToRem(18),
-      border: '1px solid #dadde9',
+      paddingLeft: '1rem', paddingRight: '1rem',
+      boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
     },
   }));
 
@@ -94,13 +108,19 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
           alignItems: 'center', gap: '2rem',
         }}>
           <Button style={{width: '100%'}} onClick={onLogout} variant="outlined">Logout</Button>
-          <div style={{fontSize: '1rem'}}>Stream keys for stream&nbsp;
-            <HtmlTooltip title={`rtmp://streamie.w3b.net/${user}`}
-                         aria-label="stream" onClick={handleCopyToClipboard}
-                         style={{cursor: 'pointer'}}
-                         arrow
+          <div style={{fontSize: '1rem', cursor: 'default'}}>Stream keys for stream&nbsp;
+            <HtmlTooltip title={
+              <span onClick={handleCopyToClipboard} style={{
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
+                <span style={{fontWeight: 'bold'}}>rtmp://streamie.w3b.net/{user}</span>
+                <small style={{textAlign: 'right'}}>copy to clipboard</small>
+              </span>
+            }
             >
-              <span><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 14 }} /></span>
+              <span onClick={handleCopyToClipboard}><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 14 }} /></span>
             </HtmlTooltip>
           </div>
           <div>
@@ -182,7 +202,6 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
         autoHideDuration={3000}
         onClose={() => {
           setMessage('');
-          setChanged(false);
         }}
         message={message}
       />
