@@ -208,28 +208,6 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               style={{width}}
             />
           </div>
-          <div>
-            <Switch
-              checked={enableFacebook}
-              onChange={(e) => {
-                setEnableFacebook(e.target.checked)
-                setChanged(true)
-              }}
-              name="enableFacebook"
-              inputProps={{'aria-label': 'enable facebook'}}
-            />
-            <TextField
-              type="text"
-              value={streamKeyFacebook}
-              onChange={(e) => {
-                setStreamKeyFacebook(e.target.value)
-                setChanged(true)
-              }}
-              label="Facebook"
-              variant="outlined"
-              style={{width}}
-            />
-          </div>
           <Button
             style={{width: '100%', marginTop: '1.2rem'}}
             variant="contained"
