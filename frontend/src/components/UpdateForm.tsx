@@ -144,8 +144,35 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
                 setStreamKeyYouTube(e.target.value)
                 setChanged(true)
               }}
-              label="Youtube"
+              label="YOUTUBE"
               variant="outlined"
+              style={{width}}
+            />
+          </div>
+          <div>
+            <Switch
+              checked={enableFacebook}
+              onChange={(e) => {
+                setEnableFacebook(e.target.checked)
+                setChanged(true)
+              }}
+              name="enableFacebook"
+              inputProps={{'aria-label': 'enable facebook'}}
+            />
+            <TextField
+              type="text"
+              value={streamKeyFacebook}
+              onChange={(e) => {
+                setStreamKeyFacebook(e.target.value)
+                setChanged(true)
+              }}
+              label="FACEBOOK"
+              variant="outlined"
+              slotProps={{
+                input: {
+                  spellCheck: false
+                },
+              }}
               style={{width}}
             />
           </div>
@@ -166,7 +193,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
                 setStreamKeyTwitch(e.target.value)
                 setChanged(true)
               }}
-              label="Twitch"
+              label="TWITCH"
               variant="outlined"
               style={{width}}
             />
