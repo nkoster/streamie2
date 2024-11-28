@@ -9,7 +9,7 @@ interface UpdateFormProps {
   onLogout: () => void;
 }
 
-const width = '25rem';
+const width = window.innerWidth > 600 ? '22rem' : '15rem';
 
 const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
   const [streamKeyYouTube, setStreamKeyYouTube] = useState('');
@@ -80,8 +80,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
     [`& .${tooltipClasses.tooltip}`]: {
       backgroundColor: '#f5f5f9',
       color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 300,
-      fontSize: theme.typography.pxToRem(20),
+      maxWidth: 320,
+      fontSize: theme.typography.pxToRem(18),
       border: '1px solid #dadde9',
     },
   }));
@@ -94,13 +94,13 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
           alignItems: 'center', gap: '2rem',
         }}>
           <Button style={{width: '100%'}} onClick={onLogout} variant="outlined">Logout</Button>
-          <div style={{fontSize: '1.2rem'}}>Stream keys for stream&nbsp;
+          <div style={{fontSize: '1rem'}}>Stream keys for stream&nbsp;
             <HtmlTooltip title={`rtmp://streamie.w3b.net/${user}`}
                          aria-label="stream" onClick={handleCopyToClipboard}
                          style={{cursor: 'pointer'}}
                          arrow
             >
-              <span><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 15 }} /></span>
+              <span><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 14 }} /></span>
             </HtmlTooltip>
           </div>
           <div>
