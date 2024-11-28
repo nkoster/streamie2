@@ -42,7 +42,9 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
       }
     };
 
-    fetchConfig();
+    fetchConfig().catch(err => {
+      setMessage(`Failed to load configuration.\n${err}`);
+    });
   }, [token]);
 
   useEffect(() => {
