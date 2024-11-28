@@ -123,7 +123,8 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
               </span>
             }
             >
-              <span onClick={handleCopyToClipboard}><strong>{user}</strong> <ContentCopyIcon sx={{ fontSize: 14 }} /></span>
+              <span onClick={handleCopyToClipboard}><strong>{user}</strong> <ContentCopyIcon
+                sx={{fontSize: 14}}/></span>
             </HtmlTooltip>
           </div>
           <div>
