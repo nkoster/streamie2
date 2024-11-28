@@ -4,7 +4,10 @@ const getBaseUrl = () => {
   const { protocol, hostname, port } = window.location;
 
   const portPart = port ? `:${port}` : '';
-
+  if (hostname === 'localhost') {
+    // Use the local server when running in development
+    return 'http://localhost:8080';
+  }
   return `${protocol}//${hostname}${portPart}`;
 };
 
