@@ -74,8 +74,9 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ token, user, onLogout }) => {
       });
       setMessage('Stream keys updated successfully!');
       setChanged(false);
-    } catch (err) {
-      setMessage(`Failed to update stream keys.\n${err}`);
+    } catch {
+      // Go to login page when there is an error
+      onLogout();
     }
   };
 
