@@ -25,12 +25,13 @@ const App: React.FC = () => {
   useEffect(() => {
     if (token) {
       const decodedToken = jwtDecode<TokenPayload>(token);
+      // Check if the token is expired
+      if (decodedToken.exp * 1000 < Date.now()) {
+        handleLogout();
+        return;
+      }
       setUser(decodedToken.username);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (!token) {
+    } else {
       handleLogout();
     }
   }, [token]);
