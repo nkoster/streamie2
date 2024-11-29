@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
+import {TextField, Button, Snackbar} from '@mui/material'
 import { login } from '../api';
 
 interface LoginProps {
@@ -16,8 +16,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       const token = await login(username, password);
       onLogin(token);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setError(`Invalid username or password\n${err}`);
+      setError('Invalid stream and/or password!');
     }
   };
 
@@ -45,10 +46,16 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               required
             />
           </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {/*{error && <p style={{ color: 'red' }}>{error}</p>}*/}
           <Button disabled={username.length < 6 && password.length < 6} variant="outlined" type={'submit'}>login</Button>
         </div>
       </form>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError('')}
+        message={error}
+      />
     </div>
   );
 };

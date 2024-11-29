@@ -25,8 +25,6 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Remove the token if it is no longer valid
       localStorage.removeItem('token');
-      // Redirect the user to the login page
-      window.location.href = '/';
     }
     return Promise.reject(error);
   }
