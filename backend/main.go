@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 	_ "os"
@@ -14,7 +16,7 @@ import (
 )
 
 // JWT secret key (use a strong key in production)
-var jwtKey = []byte("secretkey")
+var jwtKey []byte
 
 // AuthRequest Structs for JSON parsing
 type AuthRequest struct {
@@ -46,6 +48,21 @@ type ConfigResponse struct {
 
 // Users map
 var users = map[string]string{}
+
+// Load the secret key from the .env file
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	secretKey := os.Getenv("SECRET_KEY")
+	if secretKey == "" {
+		log.Fatal("SECRET_KEY is not set in the .env file")
+	}
+
+	jwtKey = []byte(secretKey)
+}
 
 // Load users from file
 func loadUsers(fileName string) error {
