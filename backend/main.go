@@ -125,10 +125,10 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create JWT token
+	// Create JWT token valid for 30 days
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": authReq.Username,
-		"exp":      time.Now().Add(1 * time.Hour).Unix(),
+		"exp":      time.Now().Add(30 * 24 * time.Hour).Unix(),
 	})
 
 	tokenString, err := token.SignedString(jwtKey)
